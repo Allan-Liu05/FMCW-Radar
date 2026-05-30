@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "adc_gpio.h"
+#include "sampling.h"
+#include "fft.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +44,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#define SAMPLE_RATE_HZ 20000000  /* 20 MSPS for ~10 MHz Nyquist frequency */
 
+static FFTResult fft_result;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,7 +81,9 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  ADC_GPIO_Init();
+  Sampling_Init(SAMPLE_RATE_HZ);
+  FFT_Init(SAMPLE_RATE_HZ);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -89,7 +95,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-
+  Sampling_Start();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,6 +105,24 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    SampleBuffer* buffer = Sampling_GetBuffer();
+    
+    /* Check if a full buffer of samples is ready */
+    if (buffer->buffer_ready) {
+      /* Process FFT on the collected samples */
+      FFT_Process(buffer->samples, &fft_result);
+      
+      /* Get peak frequency */
+      float32_t peak_freq = FFT_GetPeakFrequency(&fft_result);
+      
+      /* Example: Get magnitude at 100kHz */
+      float32_t mag_100k = FFT_GetMagnitudeAtFrequency(&fft_result, 100000.0f);
+      
+      /* Clear the buffer ready flag to collect new samples */
+      Sampling_ClearBufferReady();
+      
+      /* TODO: Use fft_result for further processing or output */
+    }
   }
   /* USER CODE END 3 */
 }
