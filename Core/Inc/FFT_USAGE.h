@@ -16,7 +16,7 @@
  * 
  * 2. sampling.h/c
  *    - Manages sample collection via timer interrupt
- *    - Configurable sample rate (default: 20 MSPS for ~10MHz Nyquist)
+ *    - Configurable sample rate (default: 2 MSPS for ~1MHz Nyquist)
  *    - Ping-pong buffering with 1024-sample buffers
  *    - Sampling_TimerCallback() should be called from timer ISR
  * 
@@ -24,15 +24,15 @@
  *    - Implements 1024-point real FFT using CMSIS-DSP
  *    - Automatic Hann windowing for spectral leakage reduction
  *    - Outputs magnitude and phase for each frequency bin
- *    - Frequency bin mapping (DC to 10 MHz)
+ *    - Frequency resolution: Fs / FFT_SIZE (2MHz / 1024 = ~1.95kHz)
  * 
  * INITIALIZATION
  * ==============
  * In main.c (already done):
  * 
  *   ADC_GPIO_Init();           // Initialize GPIO pins for ADC input
- *   Sampling_Init(20000000);   // Initialize sampling at 20 MSPS
- *   FFT_Init(20000000);        // Initialize FFT with same sample rate
+ *   Sampling_Init(2000000);    // Initialize sampling at 2 MSPS
+ *   FFT_Init(2000000);         // Initialize FFT with same sample rate
  *   Sampling_Start();          // Begin collecting samples
  * 
  * SAMPLING RATE SELECTION
@@ -47,9 +47,7 @@
  * 
  * To change sample rate:
  * 1. Modify SAMPLE_RATE_HZ in main.c
- * 2. Update timer period: Period = SystemCoreClock / SAMPLE_RATE_HZ
- *    - For 20 MHz rate at 240 MHz clock: Period = 12
- *    - For 20 MHz rate at 480 MHz clock: Period = 24
+ * 2. Update timer prescaler/period to match new rate
  * 3. Rebuild and deploy
  * 
  * CONFIGURABLE FFT SIZE

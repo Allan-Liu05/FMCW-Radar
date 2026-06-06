@@ -48,7 +48,7 @@ Frequency Analysis
 ### Modules
 
 | Module | Purpose |
-|--------|----------|
+|--------|---------|
 | `adc_gpio.h/c` | Read 10-bit parallel ADC data from GPIO pins |
 | `sampling.h/c` | Timer-driven sample collection and buffering |
 | `fft.h/c` | 1024-point FFT with CMSIS-DSP, windowing |
@@ -120,9 +120,9 @@ while (1) {
         float32_t peak_freq = FFT_GetPeakFrequency(&fft_result);
         
         // Get magnitude at specific frequency
-        float32_t mag_1mhz = FFT_GetMagnitudeAtFrequency(&fft_result, 1000000.0f);
+        float32_t mag_100k = FFT_GetMagnitudeAtFrequency(&fft_result, 100000.0f);
         
-        // Get magnitude at bin 256 (5 MHz for 20MHz sample rate)
+        // Get magnitude at bin 256 (512 kHz for 2MHz sample rate)
         float32_t mag_bin256 = fft_result.magnitude[256];
         
         // Clear buffer for next acquisition
@@ -136,7 +136,7 @@ while (1) {
 For a 20 MHz sample rate and 1024-point FFT:
 
 | Bin | Frequency |
-|-----|----------|
+|-----|-----------|
 | 0 | 0 Hz (DC) |
 | 1 | 19.5 kHz |
 | 256 | 5 MHz |

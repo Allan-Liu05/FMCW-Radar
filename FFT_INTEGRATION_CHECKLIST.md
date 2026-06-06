@@ -87,14 +87,14 @@ After building and deploying:
 
 ### Manual Testing with Debugger
 1. Set breakpoint in main loop after `FFT_Process()`
-2. Connect external ADC and apply 1 MHz test signal
+2. Connect external ADC and apply 100 kHz test signal
 3. Check `fft_result.magnitude[k]` values
 4. Verify peak appears near expected frequency bin
 
 ### Automated Testing
 1. Inject known frequency sine wave to ADC
 2. Read FFT peak frequency
-3. Verify it matches injected frequency (±20 kHz tolerance)
+3. Verify it matches injected frequency (±2 kHz tolerance)
 
 ## 🔍 Troubleshooting
 
@@ -127,7 +127,7 @@ After building and deploying:
 ## 🎯 Expected Performance
 
 Once configured:
-- **Sampling latency**: ~51 µs per 1024 samples @ 20 MSPS
+- **Sampling latency**: ~512 µs per 1024 samples @ 2 MSPS
 - **FFT latency**: ~5-10 ms per transform
 - **Total latency**: ~10-15 ms per FFT result
 - **Memory overhead**: ~8 KB buffers + FFT structures

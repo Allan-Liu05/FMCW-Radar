@@ -1,0 +1,36 @@
+# CMakeLists.txt Update Guide
+# 
+# Add these lines to your CMakeLists.txt to include the new FFT serial output files
+# 
+# Location: Add to the source files section where other Core/Src files are listed
+
+# Find the section that looks like:
+#
+# set(SOURCES
+#     Core/Src/main.c
+#     Core/Src/fft.c
+#     Core/Src/sampling.c
+#     Core/Src/adc_gpio.c
+#     ...
+# )
+
+# And add:
+#     Core/Src/fft_serial_output.c
+
+# Your SOURCES section should then include:
+set(SOURCES
+    Core/Src/main.c
+    Core/Src/fft.c
+    Core/Src/fft_serial_output.c     # ← ADD THIS LINE
+    Core/Src/sampling.c
+    Core/Src/adc_gpio.c
+    Core/Src/stm32h7xx_hal_msp.c
+    Core/Src/stm32h7xx_it.c
+    Core/Src/syscalls.c
+    Core/Src/sysmem.c
+    Core/Src/system_stm32h7xx.c
+    # ... other files
+)
+
+# The header file (Core/Inc/fft_serial_output.h) will be included automatically
+# since Core/Inc is already in your include directories

@@ -131,7 +131,7 @@ if (buffer->buffer_ready) {
 For 20 MHz sample rate, 1024-point FFT:
 
 | Bin | Frequency |
-|-----|----------|
+|-----|-----------|
 | 0 | 0 Hz (DC) |
 | 51 | 1 MHz |
 | 256 | 5 MHz |

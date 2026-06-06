@@ -48,6 +48,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/adc_gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/sampling.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/fft.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/fft_serial_output.c
 )
 
 # Add include paths

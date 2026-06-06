@@ -24,6 +24,7 @@
 #include "adc_gpio.h"
 #include "sampling.h"
 #include "fft.h"
+#include "fft_serial_output.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,6 +53,7 @@ static FFTResult fft_result;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -84,6 +86,7 @@ int main(void)
   ADC_GPIO_Init();
   Sampling_Init(SAMPLE_RATE_HZ);
   FFT_Init(SAMPLE_RATE_HZ);
+  FFT_SerialOutput_Init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -94,6 +97,7 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   Sampling_Start();
   /* USER CODE END 2 */
@@ -118,10 +122,13 @@ int main(void)
       /* Example: Get magnitude at 100kHz */
       float32_t mag_100k = FFT_GetMagnitudeAtFrequency(&fft_result, 100000.0f);
       
+      /* Send FFT result over serial to visualization server */
+      if (FFT_SerialOutput_IsReady()) {
+        FFT_SerialOutput_SendResult(&fft_result);
+      }
+      
       /* Clear the buffer ready flag to collect new samples */
       Sampling_ClearBufferReady();
-      
-      /* TODO: Use fft_result for further processing or output */
     }
   }
   /* USER CODE END 3 */
@@ -178,6 +185,72 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(ADC_D0_GPIO_Port, ADC_D0_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, ADC_D1_Pin|ADC_D2_Pin|ADC_D3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(ADC_D4_GPIO_Port, ADC_D4_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, ADC_D5_Pin|ADC_D6_Pin|ADC_D7_Pin|ADC_D8_Pin
+                          |ADC_D9_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : ADC_D0_Pin */
+  GPIO_InitStruct.Pin = ADC_D0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ADC_D0_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ADC_D1_Pin ADC_D2_Pin ADC_D3_Pin */
+  GPIO_InitStruct.Pin = ADC_D1_Pin|ADC_D2_Pin|ADC_D3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ADC_D4_Pin */
+  GPIO_InitStruct.Pin = ADC_D4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ADC_D4_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ADC_D5_Pin ADC_D6_Pin ADC_D7_Pin ADC_D8_Pin
+                           ADC_D9_Pin */
+  GPIO_InitStruct.Pin = ADC_D5_Pin|ADC_D6_Pin|ADC_D7_Pin|ADC_D8_Pin
+                          |ADC_D9_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
